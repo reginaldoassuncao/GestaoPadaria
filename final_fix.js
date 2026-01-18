@@ -1,4 +1,5 @@
-"use client";
+const fs = require('fs');
+const content = `"use client";
 
 import { useState, useEffect } from "react";
 import { 
@@ -103,7 +104,7 @@ export default function Dashboard() {
         />
         <StatCard 
           title="Valor em Estoque" 
-          value={loading ? "..." : `R$ ${stats.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} 
+          value={loading ? "..." : \`R$ \${stats.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\`} 
           icon={<ShoppingBag className="w-6 h-6" />}
           trend="Total investido"
           trendUp={true}
@@ -193,7 +194,7 @@ export default function Dashboard() {
                       dataKey="value"
                     >
                       {stats.categories.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
+                        <Cell key={\`cell-\${index}\`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
                       ))}
                     </Pie>
                     <Tooltip 
@@ -227,12 +228,12 @@ function StatCard({ title, value, icon, trend, trendUp, highlight = false }: {
   highlight?: boolean;
 }) {
   return (
-    <div className={`bg-white p-6 rounded-3xl border border-bakery-100 shadow-sm transition-all hover:translate-y-[-2px] ${highlight ? 'ring-2 ring-red-100' : ''}`}>
+    <div className={\`bg-white p-6 rounded-3xl border border-bakery-100 shadow-sm transition-all hover:translate-y-[-2px] \${highlight ? 'ring-2 ring-red-100' : ''}\`}>
       <div className="flex items-center justify-between mb-4">
-        <div className={`p-3 ${highlight ? 'bg-red-50 text-red-600' : 'bg-bakery-50 text-bakery-700'} rounded-2xl`}>
+        <div className={\`p-3 \${highlight ? 'bg-red-50 text-red-600' : 'bg-bakery-50 text-bakery-700'} rounded-2xl\`}>
           {icon}
         </div>
-        <div className={`flex items-center gap-1 text-[10px] font-black uppercase tracking-tight ${trendUp ? 'text-green-500' : 'text-bakery-300'}`}>
+        <div className={\`flex items-center gap-1 text-[10px] font-black uppercase tracking-tight \${trendUp ? 'text-green-500' : 'text-bakery-300'}\`}>
           {trendUp ? <ArrowUpRight className="w-3 h-3" /> : null}
           {trend}
         </div>
@@ -242,3 +243,6 @@ function StatCard({ title, value, icon, trend, trendUp, highlight = false }: {
     </div>
   );
 }
+`;
+fs.writeFileSync('src/app/page.tsx', content, 'utf8');
+console.log('Dashboard mock data removed completely');
