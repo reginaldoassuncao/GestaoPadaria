@@ -1,22 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PanificAI - Gestão Inteligente de Padaria
 
-## Getting Started
+Este é um sistema de gestão para padarias que utiliza Inteligência Artificial para otimizar a produção e reduzir o desperdício.
 
-First, run the development server:
+## Tecnologias Utilizadas
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Next.js 15** (App Router)
+- **Tailwind CSS 4**
+- **Firebase** (Firestore & Auth)
+- **OpenAI API** (GPT-4o-mini)
+- **Lucide React** (Ícones)
+- **Recharts** (Gráficos)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Funcionalidades
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Dashboard (Visão Geral):** Monitoramento de itens em estoque, valor total e insights gerados por IA para a produção do dia.
+2. **Controle de Estoque:** Gestão completa de ingredientes com busca, controle de quantidade e alertas de estoque baixo.
+3. **Assistente Criativo (Chef IA):** Geração de receitas inteligentes baseadas em ingredientes em excesso ou próximos da validade para maximizar lucro.
+
+## Como Iniciar
+
+1. Clone o repositório.
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Configure o arquivo `.env.local` com suas credenciais:
+   - `OPENAI_API_KEY` (Sua chave da OpenAI)
+   - `NEXT_PUBLIC_FIREBASE_*` (Suas credenciais do projeto Firebase)
+
+4. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+
+## Estrutura do Projeto
+
+- `src/app`: Páginas e rotas da API.
+- `src/components`: Componentes Reativos da interface.
+- `src/lib`: Configurações de bibliotecas (Firebase, OpenAI, Utils).
+- `src/app/globals.css`: Tema personalizado inspirado em panificação.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
