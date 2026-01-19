@@ -12,12 +12,15 @@ const menuItems = [
   { name: "Chef IA", href: "/chef", icon: ChefHat },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen }: { isOpen?: boolean }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
   return (
-    <div className="w-64 h-screen bg-white border-r border-bakery-100 flex flex-col p-6 fixed left-0 top-0 z-50">
+    <div className={cn(
+      "w-64 h-screen bg-white border-r border-bakery-100 flex flex-col p-6 fixed lg:left-0 top-0 z-50 transition-all duration-300",
+      isOpen ? "left-0" : "-left-64 lg:left-0"
+    )}>
       <div className="flex items-center gap-3 mb-10 px-2">
         <div className="w-12 h-12 bg-bakery-900 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-bakery-900/20 rotate-3">
           P

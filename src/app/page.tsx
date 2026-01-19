@@ -41,8 +41,10 @@ export default function Dashboard() {
     categories: [] as { name: string, value: number }[]
   });
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (!user) return;
 
     const q = query(
@@ -147,25 +149,27 @@ export default function Dashboard() {
                <TrendingUp className="w-12 h-12 opacity-10 mb-2" />
                <p className="text-xs font-bold tracking-widest uppercase opacity-40">Sem movimentação registrada</p>
             </div>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={emptyWeeklyData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#fdf8f6" />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{fill: '#c7a38e', fontSize: 10, fontWeight: 600}}
-                  dy={10}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="valor" 
-                  stroke="#f3e5db" 
-                  fill="#fdf8f6" 
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {mounted && (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={emptyWeeklyData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#fdf8f6" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fill: '#c7a38e', fontSize: 10, fontWeight: 600}}
+                    dy={10}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="valor" 
+                    stroke="#f3e5db" 
+                    fill="#fdf8f6" 
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -202,7 +206,7 @@ export default function Dashboard() {
                 <div className="h-full w-full flex items-center justify-center">
                    <div className="w-24 h-24 rounded-full border-4 border-dashed border-bakery-50" />
                 </div>
-              ) : (
+              ) : mounted ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -221,7 +225,7 @@ export default function Dashboard() {
                     />
                   </PieChart>
                 </ResponsiveContainer>
-              )}
+              ) : null}
             </div>
             <div className="mt-4 grid grid-cols-2 gap-y-2">
               {stats.categories.slice(0, 4).map((cat, idx) => (

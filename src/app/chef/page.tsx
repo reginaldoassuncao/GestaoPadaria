@@ -95,7 +95,7 @@ export default function ChefIA() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Ingredient Selection */}
-        <div className="bg-white p-6 rounded-2xl border border-bakery-100 shadow-sm space-y-6 sticky top-24">
+        <div className="bg-white p-6 rounded-2xl border border-bakery-100 shadow-sm space-y-6 lg:sticky lg:top-24">
           <div className="flex items-center gap-2 mb-4">
             <ChefHat className="w-6 h-6 text-bakery-700" />
             <h2 className="font-bold text-lg text-bakery-900">Chef IA</h2>
@@ -181,7 +181,7 @@ export default function ChefIA() {
               </div>
 
               <div className="p-8 space-y-8">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-4 bg-bakery-50 rounded-xl flex flex-col items-center text-center">
                     <Clock className="w-5 h-5 text-bakery-700 mb-1" />
                     <span className="text-[10px] text-bakery-400 font-bold uppercase">Tempo</span>

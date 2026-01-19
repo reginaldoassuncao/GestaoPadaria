@@ -116,11 +116,11 @@ export default function Estoque() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-bakery-900">Controle de Estoque</h1>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-bakery-700 hover:bg-bakery-800 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium shadow-sm"
+          className="bg-bakery-700 hover:bg-bakery-800 text-white px-4 py-2 rounded-xl flex items-center justify-center gap-2 transition-colors font-medium shadow-sm w-full sm:w-auto"
         >
           <Plus className="w-5 h-5" />
           Novo Ingrediente

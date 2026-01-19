@@ -5,7 +5,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import { usePathname } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,7 +21,13 @@ const geistMono = Geist_Mono({
 function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isLoginPage = pathname === "/login";
+
+  // Close sidebar on navigation (mobile)
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
 
   if (loading) {
     return (
@@ -34,21 +41,41 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
   if (!user && !isLoginPage) return null;
 
   return (
-    <div className={`flex ${isLoginPage ? "" : "bg-bakery-50"}`}>
-      {!isLoginPage && <Sidebar />}
-      <main className={`flex-1 ${isLoginPage ? "" : "ml-64 min-h-screen bg-bakery-50"}`}>
+    <div className={`flex min-h-screen ${isLoginPage ? "" : "bg-bakery-50/30"}`}>
+      {!isLoginPage && (
+        <>
+          {/* Overlay mobile */}
+          {isSidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-bakery-900/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+              onClick={() => setIsSidebarOpen(false)}
+            />
+          )}
+          <Sidebar isOpen={isSidebarOpen} />
+        </>
+      )}
+      
+      <main className={`flex-1 flex flex-col ${isLoginPage ? "" : "lg:ml-64 w-full"}`}>
         {!isLoginPage && (
-          <header className="h-16 border-b border-bakery-100 flex items-center justify-between px-8 bg-white/80 backdrop-blur-md sticky top-0 z-40 transition-all">
-            <h2 className="font-bold text-xl text-bakery-900 font-serif">
-               Sistema de Gestão
-            </h2>
+          <header className="h-16 border-b border-bakery-100 flex items-center justify-between px-4 md:px-8 bg-white/80 backdrop-blur-md sticky top-0 z-30 transition-all">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setIsSidebarOpen(true)}
+                className="lg:hidden p-2 hover:bg-bakery-50 rounded-xl text-bakery-700 transition-colors"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              <h2 className="font-bold text-lg md:text-xl text-bakery-900 font-serif truncate">
+                Sistema de Gestão
+              </h2>
+            </div>
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
-              <span className="text-xs text-bakery-500 font-bold uppercase tracking-tighter">Sistema Online</span>
+              <span className="hidden sm:inline text-xs text-bakery-500 font-bold uppercase tracking-tighter">Sistema Online</span>
             </div>
           </header>
         )}
-        <div className={`${isLoginPage ? "" : "p-8"}`}>
+        <div className={`flex-1 ${isLoginPage ? "" : "p-4 md:p-8"}`}>
           {children}
         </div>
       </main>
@@ -63,7 +90,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground bg-white`}>
+      <body 
+        className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground bg-white`}
+        suppressHydrationWarning
+      >
         <AuthProvider>
           <RootLayoutContent>
             {children}
