@@ -17,9 +17,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { db } from "@/lib/firebase";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
 
-// Empty usage data as we don't have a consumption tracking system yet
 const emptyWeeklyData = [
   { name: 'Seg', valor: 0 },
   { name: 'Ter', valor: 0 },
@@ -33,6 +33,7 @@ const emptyWeeklyData = [
 const COLORS = ['#846358', '#422a22', '#c7a38e', '#f3e5db', '#d9c5b2'];
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     totalItems: 0,
     lowStock: 0,
@@ -42,7 +43,13 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(collection(db, "ingredients"));
+    if (!user) return;
+
+    const q = query(
+      collection(db, "ingredients"),
+      where("userId", "==", user.uid)
+    );
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
       let total = 0;
       let low = 0;
@@ -78,6 +85,19 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h2 className="text-3xl font-black text-bakery-900 tracking-tight">
+            Olá, {user?.displayName?.split(' ')[0] || 'Chef'}! 👋
+          </h2>
+          <p className="text-bakery-400 font-medium">Veja como está a sua padaria hoje.</p>
+        </div>
+        <div className="flex items-center gap-2 bg-bakery-100/50 px-4 py-2 rounded-2xl border border-bakery-100">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-xs font-bold text-bakery-700 uppercase tracking-wider">Sistema Online</span>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
           title="Total de Ingredientes" 

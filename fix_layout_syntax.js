@@ -1,4 +1,5 @@
-"use client";
+const fs = require('fs');
+const content = `"use client";
 
 import { useAuth, AuthProvider } from "@/context/AuthContext";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -33,10 +34,14 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
 
   if (!user && !isLoginPage) return null;
 
+  const wrapperClass = isLoginPage ? "" : "bg-bakery-50";
+  const mainClass = isLoginPage ? "" : "ml-64 min-h-screen bg-bakery-50";
+  const contentClass = isLoginPage ? "" : "p-8";
+
   return (
-    <div className={`flex ${isLoginPage ? "" : "bg-bakery-50"}`}>
+    <div className={"flex " + wrapperClass}>
       {!isLoginPage && <Sidebar />}
-      <main className={`flex-1 ${isLoginPage ? "" : "ml-64 min-h-screen bg-bakery-50"}`}>
+      <main className={"flex-1 " + mainClass}>
         {!isLoginPage && (
           <header className="h-16 border-b border-bakery-100 flex items-center justify-between px-8 bg-white/80 backdrop-blur-md sticky top-0 z-40 transition-all">
             <h2 className="font-bold text-xl text-bakery-900 font-serif">
@@ -48,7 +53,7 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
             </div>
           </header>
         )}
-        <div className={`${isLoginPage ? "" : "p-8"}`}>
+        <div className={contentClass}>
           {children}
         </div>
       </main>
@@ -63,7 +68,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased text-foreground bg-white`}>
+      <body className={geistSans.variable + " " + geistMono.variable + " antialiased text-foreground bg-white"}>
         <AuthProvider>
           <RootLayoutContent>
             {children}
@@ -73,3 +78,6 @@ export default function RootLayout({
     </html>
   );
 }
+`;
+fs.writeFileSync('src/app/layout.tsx', content, 'utf8');
+console.log('Layout fixed successfully');

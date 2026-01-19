@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { ChefHat, Sparkles, Loader2, Clock, Utensils, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { db } from "@/lib/firebase";
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy, where, QuerySnapshot, DocumentData } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
 
 interface Ingredient {
   id: string;
@@ -23,6 +24,7 @@ interface Recipe {
 }
 
 export default function ChefIA() {
+  const { user } = useAuth();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -30,19 +32,27 @@ export default function ChefIA() {
   const [loadingIngredients, setLoadingIngredients] = useState(true);
 
   useEffect(() => {
-    const q = query(collection(db, "ingredients"), orderBy("name", "asc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    if (!user) return;
+
+    const q = query(
+      collection(db, "ingredients"), 
+      where("userId", "==", user.uid),
+      orderBy("name", "asc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
       const items = snapshot.docs.map(doc => ({
         id: doc.id,
         name: doc.data().name,
         category: doc.data().category
       })) as Ingredient[];
+      
       setIngredients(items);
       setLoadingIngredients(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   const toggleIngredient = (name: string) => {
     setSelectedIngredients(prev =>

@@ -12,8 +12,12 @@ import {
   deleteDoc, 
   doc, 
   query, 
-  orderBy 
+  orderBy,
+  where,
+  QuerySnapshot,
+  DocumentData
 } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
 
 interface Ingredient {
   id: string;
@@ -26,6 +30,7 @@ interface Ingredient {
 }
 
 export default function Estoque() {
+  const { user } = useAuth();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -33,26 +38,34 @@ export default function Estoque() {
   
   const [newName, setNewName] = useState("");
   const [newCategory, setNewCategory] = useState("Farinhas");
-  const [newQuantity, setNewQuantity] = useState(0);
+  const [newQuantity, setNewQuantity] = useState<string>("");
   const [newUnit, setNewUnit] = useState("kg");
-  const [newCost, setNewCost] = useState(0);
-  const [newMinQuantity, setNewMinQuantity] = useState(5);
+  const [newCost, setNewCost] = useState<string>("");
+  const [newMinQuantity, setNewMinQuantity] = useState<string>("5");
 
   const ingredientsRef = collection(db, "ingredients");
 
   useEffect(() => {
-    const q = query(ingredientsRef, orderBy("name", "asc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    if (!user) return;
+
+    const q = query(
+      ingredientsRef, 
+      where("userId", "==", user.uid),
+      orderBy("name", "asc")
+    );
+    
+    const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
       const items = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as Ingredient[];
+      
       setIngredients(items);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   const filteredIngredients = ingredients.filter(i => 
     i.name.toLowerCase().includes(search.toLowerCase())
@@ -60,10 +73,11 @@ export default function Estoque() {
 
   const handleAddIngredient = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newName) return;
+    if (!newName || !user) return;
 
     try {
       await addDoc(ingredientsRef, {
+        userId: user.uid,
         name: newName,
         category: newCategory,
         quantity: Number(newQuantity),
@@ -81,10 +95,10 @@ export default function Estoque() {
   const resetForm = () => {
     setNewName("");
     setNewCategory("Farinhas");
-    setNewQuantity(0);
+    setNewQuantity("");
     setNewUnit("kg");
-    setNewCost(0);
-    setNewMinQuantity(5);
+    setNewCost("");
+    setNewMinQuantity("5");
   };
 
   const updateQuantity = async (id: string, currentQty: number, delta: number) => {
@@ -276,9 +290,10 @@ export default function Estoque() {
                   <input 
                     type="number" 
                     step="any"
+                    placeholder="0"
                     className="w-full bg-bakery-50 border border-bakery-100 rounded-lg py-2 px-3 focus:ring-2 focus:ring-bakery-200 outline-none transition-all"
                     value={newQuantity}
-                    onChange={(e) => setNewQuantity(Number(e.target.value))}
+                    onChange={(e) => setNewQuantity(e.target.value)}
                   />
                 </div>
                 <div>
@@ -286,9 +301,10 @@ export default function Estoque() {
                   <input 
                     type="number" 
                     step="0.01"
+                    placeholder="0.00"
                     className="w-full bg-bakery-50 border border-bakery-100 rounded-lg py-2 px-3 focus:ring-2 focus:ring-bakery-200 outline-none transition-all"
                     value={newCost}
-                    onChange={(e) => setNewCost(Number(e.target.value))}
+                    onChange={(e) => setNewCost(e.target.value)}
                   />
                 </div>
               </div>
@@ -298,9 +314,10 @@ export default function Estoque() {
                 <input 
                   type="number" 
                   step="any"
+                  placeholder="5"
                   className="w-full bg-bakery-50 border border-bakery-100 rounded-lg py-2 px-3 focus:ring-2 focus:ring-bakery-200 outline-none transition-all"
                   value={newMinQuantity}
-                  onChange={(e) => setNewMinQuantity(Number(e.target.value))}
+                  onChange={(e) => setNewMinQuantity(e.target.value)}
                 />
               </div>
 
